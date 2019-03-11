@@ -1,7 +1,8 @@
 import string
+import collections
 
 
-class Essay:
+class Essay(object):
 
     # Class Attribute
     species = 'essay'
@@ -10,7 +11,6 @@ class Essay:
     def __init__(self, essay_path, tokenizer=False):
         self.essay_path = essay_path
         self.file = open(essay_path, "r")
-        self.path = essay_path
         self.author = self.file.readline().rstrip(' \n')
         self.essay = self.file.readline().rstrip(' \n').lower()
         self.file.close()
@@ -34,55 +34,57 @@ class Essay:
         self.words = self.essay.split(" ")
 
 
-class Model:
+class Model(object):
 
     species = "Language Model"
+    active_model = "None"
+    isModelCreated = False
 
     def __init__(self, author):
         self.essays = []
-        self.all_uniq_words = set()
+        self.uni_model_words = []
+        self.bi_model_words = []
+        self.tri_model_words = []
         self.author = author
-        self.word_count = 0
+        self.uni_bag_of_words = dict()
+        self.bi_bag_of_words = dict()
+        self.tri_bag_of_words = dict()
+        self.all_words = []
 
     def add_essay(self, new_essay):
         self.essays.append(new_essay)
-        # print("essay added success")
+        self.all_words += new_essay.words
 
-    def uniq_word(self, modelname = "unigram"):
-        self.all_uniq_words = set()
-        if modelname == "unigram":
-            self.all_uniq_words |= self.unigram_model()
-        if modelname == "bigram":
-            self.all_uniq_words |= self.bigram_model()
-        if modelname == "trigram":
-            self.all_uniq_words |= self.trigram_model()
+    def create_models(self):
+        if not self.isModelCreated:
+            self.isModelCreated = True
+            self.unigram_model()
+            self.bigram_model()
+            self.trigram_model()
+            self.get_bag_of_words()
+        else:
+            print("You already Created Models")
 
     def unigram_model(self):
-        print("unigram activated")
-        uniq_words = set()
-        self.word_count = 0
         for essay in self.essays:
-            uniq_words |= set(essay.words)
-            self.word_count += len(essay.words)
-        return uniq_words
+            self.uni_model_words += essay.words
 
     def bigram_model(self):
-        print("bigram activated")
-        uniq_words = set()
-        self.word_count = 0
         for essay in self.essays:
             for i, j in zip(essay.words[0::1], essay.words[1::1]):
-                uniq_words.add(i+" "+j)
-                self.word_count += 1
-        return uniq_words
+                self.bi_model_words.append(i+" "+j)
 
     def trigram_model(self):
-        print("trigram activated")
-        uniq_words = set()
-        self.word_count = 0
-
         for essay in self.essays:
             for i, j, k in zip(essay.words[0::1], essay.words[1::1], essay.words[2::1]):
-                uniq_words.add(i + " " + j + " " + k)
-                self.word_count += 1
-        return uniq_words
+                self.tri_model_words.append(i + " " + j + " " + k)
+
+    def get_bag_of_words(self):
+        self.uni_bag_of_words = dict(collections.Counter(self.uni_model_words))
+        self.bi_bag_of_words = dict(collections.Counter(self.bi_model_words))
+        self.tri_bag_of_words = dict(collections.Counter(self.tri_model_words))
+
+    def get_probabilities(self):
+        for i,j in self.tri_bag_of_words.items():
+            keywords = i.rsplit(" ", 1)
+            print("P("+keywords[1]+"|"+keywords[0]+") = ", j/self.bi_bag_of_words[keywords[0]])
