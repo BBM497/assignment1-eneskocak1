@@ -1,5 +1,7 @@
 import settings
 import Models as model
+import copy
+
 
 Hamilton = model.Model("Hamilton")
 Madison = model.Model("Madison")
