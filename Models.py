@@ -1,6 +1,6 @@
 import string
 import collections
-
+import numpy as np
 
 class Essay(object):
 
@@ -8,7 +8,7 @@ class Essay(object):
     species = 'Essay'
 
     # Initializer / Instance Attributes
-    def __init__(self, essay_path, tokenizer=False):
+    def __init__(self, essay_path, tokenizer=True):
         self.essay_path = essay_path
         self.file = open(essay_path, "r")
         self.author = self.file.readline().rstrip(' \n')
@@ -25,8 +25,8 @@ class Essay(object):
 
     # tokenizer for performing
     def tokenizer(self):
-        self.essay = self.essay.replace(". ", " [DOTINHERE] ")
-        # self.essay = self.essay.replace(",", " [SEPERATORISHERE]")
+        self.essay = self.essay.replace(".", " END END . START START ")
+
 
     # splitting function
     def splitter(self):
@@ -97,7 +97,21 @@ class Model(object):
         self.tri_bag_of_words = dict(collections.Counter(self.tri_model_words))
 
     # Getting Model Probabilities
-    def get_probabilities(self):
-        for i,j in self.tri_bag_of_words.items():
-            keywords = i.rsplit(" ", 1)
-            print("P("+keywords[1]+"|"+keywords[0]+") = ", j/self.bi_bag_of_words[keywords[0]])
+
+    def get_probabilities(self,testword,mode):
+        if mode == "bigram":
+            keywords = testword.rsplit(" ", 1)
+            print(keywords)
+            pro = (self.bi_bag_of_words.get(testword, 0)+1)/(self.uni_bag_of_words.get(keywords[0], 0)+self.bi_bag_of_words.keys().__len__())
+            return -np.log10(pro)
+        if mode == "trigram":
+            keywords = testword.rsplit(" ", 1)
+            pro = (self.tri_bag_of_words.get(testword, 0)+1)/(self.bi_bag_of_words.get(keywords[0], 0)+self.tri_bag_of_words.keys().__len__())
+            return -np.log10(pro)
+        if mode == "unigram":
+            keywords = testword.rsplit(" ", 1)
+            pro = (self.uni_bag_of_words.get(testword, 0)+1)/(len(self.uni_model_words)+self.uni_bag_of_words.keys().__len__())
+            return -np.log10(pro)
+
+    def perplexity(self):
+        print("enes")
