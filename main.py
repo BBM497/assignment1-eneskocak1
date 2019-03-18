@@ -1,51 +1,48 @@
 import settings
 import Models as model
-import copy
 
 
-Hamilton = model.Model("Hamilton")
-Madison = model.Model("Madison")
+def classification_test(test_indexes, modelname):
 
-for i in settings.hamilton_train_essays_indexes:
-    new = model.Essay(settings.federalist_papers_directory+str(i)+".txt")
-    Hamilton.add_essay(new)
+    Hamilton = model.Model("Hamilton", modelname)
+    Madison = model.Model("Madison", modelname)
 
-for i in settings.madison_train_essays_indexes:
-    new = model.Essay(settings.federalist_papers_directory+str(i)+".txt")
-    Madison.add_essay(new)
+    Hamilton.add_essay(settings.hamilton_train_essays_indexes)
+    Madison.add_essay(settings.madison_train_essays_indexes)
+
+    for path in test_indexes:
+        Unk = model.Model("UNK", modelname)
+        Unk.add_essay([path])
+        hamilton_prob =0
+        madison_prob = 0
+        model_words = Unk.get_model_words()
+        for i in model_words:
+            hamilton_prob += Hamilton.get_probabilities(i)
+            madison_prob += Madison.get_probabilities(i)
+        print(str(path)+".txt RESULT:")
+        hamilton_prob = Unk.perplexity(hamilton_prob, len(model_words))
+        madison_prob = Unk.perplexity(madison_prob, len(model_words))
+        if hamilton_prob < madison_prob:
+            print(Unk.active_model, "WIN:[HAMILTON] Hamilton:", "{0:.5f}".format(hamilton_prob), "Madison:", "{0:.5f}".format(madison_prob))
+        else:
+            print(Unk.active_model, "WIN:[MADISON] Hamilton:", "{0:.5f}".format(hamilton_prob), "Madison:", "{0:.5f}".format(madison_prob))
+
+        print("********************************************************************")
+
+def generator_for_model(modelname):
+    Hamilton = model.Model("Hamilton", modelname)
+    Madison = model.Model("Madison", modelname)
+
+    Hamilton.add_essay(settings.hamilton_train_essays_indexes)
+    Madison.add_essay(settings.madison_train_essays_indexes)
+
+    Hamilton.generator()
+    Madison.generator()
+
+#classification_test(settings.test_essays_indexes, "unigram")
+generator_for_model("unigram")
+generator_for_model("bigram")
+generator_for_model("trigram")
 
 
 
-Hamilton.create_models()
-Madison.create_models()
-
-def test(path,modelname):
-    test = model.Essay(settings.federalist_papers_directory +str(path)+ ".txt")
-    Unk= model.Model("UNK")
-    Unk.add_essay(test)
-    Unk.create_models()
-    total =0
-    madi = 0
-    basemodel= "None"
-    if modelname == "unigram":
-        basemodel = Unk.uni_model_words
-    if modelname == "bigram":
-        basemodel = Unk.bi_model_words
-    if modelname == "trigram":
-        basemodel = Unk.tri_model_words
-    for i in basemodel:
-        total += Hamilton.get_probabilities(i, modelname)
-        madi += Madison.get_probabilities(i, modelname)
-
-    total = 2**(total/len(basemodel))
-    madi = 2 **(madi / len(basemodel))
-
-    if total > madi:
-        print("Hamilton probabilitie: ",total,"\nMadison probabilitie: ",madi)
-        print("This is HAMILTON")
-    else:
-        print("Hamilton probabilitie: ", total, "\nMadison probabilitie: ", madi)
-        print("This is MADISON")
-
-for i in settings.hamilton_test_essays_indexes:
-    test(i,"trigram")

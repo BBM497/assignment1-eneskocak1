@@ -1,20 +1,23 @@
 import string
 import collections
 import numpy as np
+import settings
+import random as rd
 
 class Essay(object):
 
     # Class Attribute
     species = 'Essay'
-
+    tokenlist = [".", "?", "!", ":", ",", "-", ";", "(", ")", "[", "]", "`", "'", "<", ">", "/", "@", "%"]
     # Initializer / Instance Attributes
-    def __init__(self, essay_path, tokenizer=True):
+    def __init__(self, essay_path, modelname, tokenizer=True):
         self.essay_path = essay_path
         self.file = open(essay_path, "r")
         self.author = self.file.readline().rstrip(' \n')
         self.essay = self.file.readline().rstrip(' \n').lower()
         self.file.close()
-        self.words = ""
+        self.words = []
+        self.modelname = modelname
         if tokenizer:
             self.tokenizer()
         self.splitter()
@@ -25,14 +28,50 @@ class Essay(object):
 
     # tokenizer for performing
     def tokenizer(self):
-        self.essay = self.essay.replace(".", " END END . START START ")
-
-
+        if self.modelname == "unigram":
+            self.essay = self.essay.replace(".", " . ")
+            self.essay = self.essay.replace("?", " ? ")
+            self.essay = self.essay.replace("!", " ! ")
+        if self.modelname == "bigram":
+            self.essay = self.essay.replace(".", settings.SENTENCE_END+"."+settings.SENTENCE_START)
+            self.essay = self.essay.replace("?", settings.SENTENCE_END+"?"+settings.SENTENCE_START)
+            self.essay = self.essay.replace("!", settings.SENTENCE_END+"!"+settings.SENTENCE_START)
+        if self.modelname == "trigram":
+            self.essay = self.essay.replace(".", settings.SENTENCE_END + settings.SENTENCE_END + "." + settings.SENTENCE_START+settings.SENTENCE_START)
+            self.essay = self.essay.replace("?", settings.SENTENCE_END + settings.SENTENCE_END + "?" + settings.SENTENCE_START+settings.SENTENCE_START)
+            self.essay = self.essay.replace("!", settings.SENTENCE_END + settings.SENTENCE_END + "!" + settings.SENTENCE_START+settings.SENTENCE_START)
+        self.essay = self.essay.replace(":", " : ")
+        self.essay = self.essay.replace(",", " , ")
+        self.essay = self.essay.replace("-", " - ")
+        self.essay = self.essay.replace(";", " ; ")
+        self.essay = self.essay.replace("(", " ( ")
+        self.essay = self.essay.replace(")", " ) ")
+        self.essay = self.essay.replace("[", " [ ")
+        self.essay = self.essay.replace("]", " ] ")
+        self.essay = self.essay.replace("`", " ` ")
+        self.essay = self.essay.replace("'", " ' ")
+        self.essay = self.essay.replace("@", " @ ")
+        self.essay = self.essay.replace("%", " % ")
     # splitting function
     def splitter(self):
-        self.essay = self.essay.translate(str.maketrans("", "", string.punctuation))
-        self.words = self.essay.split(" ")
+        if self.modelname == "bigram":
+            self.essay = settings.SENTENCE_START + self.essay
+        if self.modelname == "trigram":
+            self.essay = settings.SENTENCE_START + settings.SENTENCE_START + self.essay
 
+        self.words = self.essay.split(" ")
+        while True:
+            try:
+                self.words.remove("")
+            except:
+                break
+        if self.modelname == "bigram":
+            if self.words[-1] == "<s>":
+                self.words.pop(-1)
+        if self.modelname == "trigram":
+            for i in range(1,3):
+                if self.words[-1] == "<s>":
+                    self.words.pop(-1)
 
 class Model(object):
 
@@ -46,7 +85,7 @@ class Model(object):
     isModelCreated = False
 
     # Initializer / Instance Attributes
-    def __init__(self, author):
+    def __init__(self, author, model_name):
         self.essays = []
         self.uni_model_words = []
         self.bi_model_words = []
@@ -56,12 +95,15 @@ class Model(object):
         self.bi_bag_of_words = dict()
         self.tri_bag_of_words = dict()
         self.all_words = []
+        self.active_model = model_name
 
     # Adding Essay to Language Model
-    def add_essay(self, new_essay):
-        self.essays.append(new_essay)
-        self.all_words += new_essay.words
-
+    def add_essay(self, indexes):
+        for i in indexes:
+            new = Essay(settings.federalist_papers_directory+str(i)+".txt", self.active_model)
+            self.essays.append(new)
+            self.all_words += new.words
+        self.create_models()
     # Creating unigram, bigram and trigram models and creating bagOfWords
     def create_models(self):
         if not self.isModelCreated:
@@ -95,23 +137,89 @@ class Model(object):
         self.uni_bag_of_words = dict(collections.Counter(self.uni_model_words))
         self.bi_bag_of_words = dict(collections.Counter(self.bi_model_words))
         self.tri_bag_of_words = dict(collections.Counter(self.tri_model_words))
-
     # Getting Model Probabilities
 
-    def get_probabilities(self,testword,mode):
-        if mode == "bigram":
+    def get_probabilities(self,testword):
+        if self.active_model == "bigram":
             keywords = testword.rsplit(" ", 1)
-            print(keywords)
-            pro = (self.bi_bag_of_words.get(testword, 0)+1)/(self.uni_bag_of_words.get(keywords[0], 0)+self.bi_bag_of_words.keys().__len__())
-            return -np.log10(pro)
-        if mode == "trigram":
+            pro = np.divide(self.bi_bag_of_words.get(testword, 0)+1, (self.uni_bag_of_words.get(keywords[0], 0)+self.uni_bag_of_words.keys().__len__()))
+            return -np.log2(pro)
+        if self.active_model == "trigram":
             keywords = testword.rsplit(" ", 1)
-            pro = (self.tri_bag_of_words.get(testword, 0)+1)/(self.bi_bag_of_words.get(keywords[0], 0)+self.tri_bag_of_words.keys().__len__())
-            return -np.log10(pro)
-        if mode == "unigram":
+            pro = np.divide(self.tri_bag_of_words.get(testword, 0)+1, (self.bi_bag_of_words.get(keywords[0], 0)+self.uni_bag_of_words.keys().__len__()))
+            return -np.log2(pro)
+        if self.active_model == "unigram":
             keywords = testword.rsplit(" ", 1)
-            pro = (self.uni_bag_of_words.get(testword, 0)+1)/(len(self.uni_model_words)+self.uni_bag_of_words.keys().__len__())
-            return -np.log10(pro)
+            pro = np.divide(self.uni_bag_of_words.get(testword, 0)+1, (len(self.uni_model_words)+self.uni_bag_of_words.keys().__len__()))
+            return -np.log2(pro)
 
-    def perplexity(self):
-        print("enes")
+    def get_model_words(self):
+        if self.active_model == "unigram":
+            return self.uni_model_words
+        if self.active_model == "bigram":
+            return self.bi_model_words
+        if self.active_model == "trigram":
+            return self.tri_model_words
+
+
+    def perplexity(self, number, count):
+        return np.power(2, (number/count))
+
+    def generator(self):
+        print("*******************************************************************************************************")
+        print(
+            "This Essay generated for: " + self.author.upper() + " and use with " + self.active_model.upper() + " model -->")
+        generate = True
+        index = 0
+        newessay = "Essay not created please contact with admin :D"
+        if self.active_model == "unigram":
+            newessay = []
+            while generate:
+                if index != 0:
+                    if index == 29 or newessay[index-1] == "." :
+                        break
+                olasi = ({i: j for i, j in self.uni_bag_of_words.items()})
+                returned = self.cumulative_returner(olasi)
+                newessay.append(returned)
+                index += 1
+
+        if self.active_model == "bigram":
+
+            newessay = [settings.SENTENCE_START.strip(" ")]
+            while generate:
+                if index == 29 or newessay[index] == ".":
+                    break
+                olasi = ({i: j for i, j in self.bi_bag_of_words.items() if newessay[index] == i.rsplit(" ",1)[0]})
+                returned = self.cumulative_returner(olasi)
+                newessay.append(returned)
+                index += 1
+        if self.active_model == "trigram":
+            newessay = [settings.SENTENCE_START.strip(" "),settings.SENTENCE_START.strip(" ")]
+            index = 1
+            while generate:
+                if index == 29 or newessay[index] == ".":
+                    break
+                olasi = ({i: j for i, j in self.tri_bag_of_words.items() if newessay[index-1] + " " + newessay[index] == i.rsplit(" ",1)[0]})
+                returned = self.cumulative_returner(olasi)
+                newessay.append(returned)
+                index += 1
+
+
+        print(' '.join(newessay))
+        print("*******************************************************************************************************")
+
+    def cumulative_returner(self,dict):
+
+        total = (np.sum(list(dict.values())))
+        start = 0
+        cumulative_dict = {}
+        for i,j in dict.items():
+            cumulative_dict[i]={"start": start, "end":start+(j/total)}
+            start += j/total
+        random = rd.random()
+        for i,j in cumulative_dict.items():
+            if random >= j["start"] and random < j["end"]:
+                if self.active_model == "unigram":
+                    return i
+                else:
+                    return i.rsplit(" ",1)[1]

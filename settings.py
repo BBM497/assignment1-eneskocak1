@@ -12,3 +12,6 @@ madison_test_essays_indexes = [47, 48, 58]
 
 test_essays_indexes = [49, 50, 51, 52, 53, 54, 55, 56, 57, 62, 63]
 
+SENTENCE_START = " <s> "
+
+SENTENCE_END = " </s> "
