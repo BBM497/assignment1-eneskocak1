@@ -19,15 +19,14 @@ def classification_test(test_indexes, modelname):
         for i in model_words:
             hamilton_prob += Hamilton.get_probabilities(i)
             madison_prob += Madison.get_probabilities(i)
-        print(str(path)+".txt RESULT:")
+
         hamilton_prob = Unk.perplexity(hamilton_prob, len(model_words))
         madison_prob = Unk.perplexity(madison_prob, len(model_words))
         if hamilton_prob < madison_prob:
-            print(Unk.active_model, "WIN:[HAMILTON] Hamilton:", "{0:.5f}".format(hamilton_prob), "Madison:", "{0:.5f}".format(madison_prob))
+            print(str(path)+".txt "+Unk.active_model.upper(), "WIN:[HAMILTON] Hamilton:", "{0:.5f}".format(hamilton_prob), "Madison:", "{0:.5f}".format(madison_prob))
         else:
-            print(Unk.active_model, "WIN:[MADISON] Hamilton:", "{0:.5f}".format(hamilton_prob), "Madison:", "{0:.5f}".format(madison_prob))
+            print(str(path)+".txt "+Unk.active_model.upper(), "WIN:[MADISON] Hamilton:", "{0:.5f}".format(hamilton_prob), "Madison:", "{0:.5f}".format(madison_prob))
 
-        print("********************************************************************")
 
 def generator_for_model(modelname):
     Hamilton = model.Model("Hamilton", modelname)
@@ -39,10 +38,14 @@ def generator_for_model(modelname):
     Hamilton.generator()
     Madison.generator()
 
-#classification_test(settings.test_essays_indexes, "unigram")
-generator_for_model("unigram")
+classification_test(settings.test_essays_indexes, "unigram")
+print("\n")
+classification_test(settings.test_essays_indexes, "bigram")
+print("\n")
+classification_test(settings.test_essays_indexes, "trigram")
+"""generator_for_model("unigram")
 generator_for_model("bigram")
-generator_for_model("trigram")
+generator_for_model("trigram")"""
 
 
 

@@ -146,9 +146,10 @@ class Model(object):
             return -np.log2(pro)
         if self.active_model == "trigram":
             keywords = testword.rsplit(" ", 1)
-            pro = np.divide(self.tri_bag_of_words.get(testword, 0)+1, (self.bi_bag_of_words.get(keywords[0], 0)+self.uni_bag_of_words.keys().__len__()))
+            pro = np.divide(self.tri_bag_of_words.get(testword, 0)+1, (self.bi_bag_of_words.get(keywords[0], 0)+self.bi_bag_of_words.keys().__len__()))
             return -np.log2(pro)
         if self.active_model == "unigram":
+
             keywords = testword.rsplit(" ", 1)
             pro = np.divide(self.uni_bag_of_words.get(testword, 0)+1, (len(self.uni_model_words)+self.uni_bag_of_words.keys().__len__()))
             return -np.log2(pro)
