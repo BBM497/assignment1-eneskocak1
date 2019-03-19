@@ -3,7 +3,7 @@ import collections
 import numpy as np
 import settings
 import random as rd
-
+import datetime
 class Essay(object):
 
     # Class Attribute
@@ -177,7 +177,7 @@ class Model(object):
             newessay = []
             while generate:
                 if index != 0:
-                    if index == 29 or newessay[index-1] == "." :
+                    if index == 29 or newessay[index-1] == "." or newessay[index-1] == "?" or newessay[index-1] == "!":
                         break
                 olasi = ({i: j for i, j in self.uni_bag_of_words.items()})
                 returned = self.cumulative_returner(olasi)
@@ -188,7 +188,7 @@ class Model(object):
 
             newessay = [settings.SENTENCE_START.strip(" ")]
             while generate:
-                if index == 29 or newessay[index] == ".":
+                if index == 30 or newessay[index] == "." or newessay[index] == "?" or newessay[index] == "!":
                     break
                 olasi = ({i: j for i, j in self.bi_bag_of_words.items() if newessay[index] == i.rsplit(" ",1)[0]})
                 returned = self.cumulative_returner(olasi)
@@ -198,7 +198,7 @@ class Model(object):
             newessay = [settings.SENTENCE_START.strip(" "),settings.SENTENCE_START.strip(" ")]
             index = 1
             while generate:
-                if index == 29 or newessay[index] == ".":
+                if index == 29 or newessay[index] == "." or newessay[index] == "?" or newessay[index] == "!":
                     break
                 olasi = ({i: j for i, j in self.tri_bag_of_words.items() if newessay[index-1] + " " + newessay[index] == i.rsplit(" ",1)[0]})
                 returned = self.cumulative_returner(olasi)
@@ -208,6 +208,9 @@ class Model(object):
 
         print(' '.join(newessay))
         print("*******************************************************************************************************")
+        f = open(self.author+"_"+self.active_model+"generated.txt","a")
+        f.write(datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S] ")+" ".join(newessay)+"\n")
+        f.close()
 
     def cumulative_returner(self,dict):
 
