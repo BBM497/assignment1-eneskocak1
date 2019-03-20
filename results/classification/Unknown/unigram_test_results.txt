@@ -1,0 +1,11 @@
+[2019-03-20 22:15:32] 49.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 385.16207 Madison Perplexity: 360.30581
+[2019-03-20 22:15:32] 50.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 455.37239 Madison Perplexity: 425.36627
+[2019-03-20 22:15:32] 51.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 384.38708 Madison Perplexity: 348.69196
+[2019-03-20 22:15:32] 52.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 417.18904 Madison Perplexity: 379.43894
+[2019-03-20 22:15:32] 53.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 429.04186 Madison Perplexity: 397.95632
+[2019-03-20 22:15:32] 54.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 376.40093 Madison Perplexity: 342.11296
+[2019-03-20 22:15:32] 55.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 438.34637 Madison Perplexity: 410.14392
+[2019-03-20 22:15:32] 56.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 392.75314 Madison Perplexity: 361.22101
+[2019-03-20 22:15:32] 57.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 444.32690 Madison Perplexity: 414.76893
+[2019-03-20 22:15:32] 62.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 448.66343 Madison Perplexity: 406.66878
+[2019-03-20 22:15:32] 63.txt UNIGRAM WIN:[MADISON] Hamilton Perplexity: 439.14716 Madison Perplexity: 401.98879

@@ -1,0 +1,3 @@
+[2019-03-20 22:15:32] 47.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 13631.28248 Madison Perplexity: 11866.63114
+[2019-03-20 22:15:32] 48.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 13572.44291 Madison Perplexity: 12355.72567
+[2019-03-20 22:15:32] 58.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 13536.16909 Madison Perplexity: 12141.76165

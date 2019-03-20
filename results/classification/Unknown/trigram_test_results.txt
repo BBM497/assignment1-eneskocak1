@@ -1,0 +1,11 @@
+[2019-03-20 22:15:33] 49.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 12071.42856 Madison Perplexity: 11124.05487
+[2019-03-20 22:15:33] 50.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 12777.30494 Madison Perplexity: 11794.21237
+[2019-03-20 22:15:33] 51.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 13038.00844 Madison Perplexity: 11748.14961
+[2019-03-20 22:15:33] 52.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 12575.68370 Madison Perplexity: 11092.26659
+[2019-03-20 22:15:33] 53.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 13700.49926 Madison Perplexity: 12459.69933
+[2019-03-20 22:15:33] 54.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 13329.99381 Madison Perplexity: 11758.31078
+[2019-03-20 22:15:33] 55.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 14429.07767 Madison Perplexity: 12879.87512
+[2019-03-20 22:15:33] 56.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 13328.06757 Madison Perplexity: 12074.56933
+[2019-03-20 22:15:33] 57.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 12935.03269 Madison Perplexity: 11983.26105
+[2019-03-20 22:15:33] 62.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 12931.33001 Madison Perplexity: 11670.33018
+[2019-03-20 22:15:33] 63.txt TRIGRAM WIN:[MADISON] Hamilton Perplexity: 14053.71052 Madison Perplexity: 12842.78394

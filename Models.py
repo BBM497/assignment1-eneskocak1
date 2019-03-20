@@ -142,11 +142,11 @@ class Model(object):
     def get_probabilities(self,testword):
         if self.active_model == "bigram":
             keywords = testword.rsplit(" ", 1)
-            pro = np.divide(self.bi_bag_of_words.get(testword, 0)+1, (self.uni_bag_of_words.get(keywords[0], 0)+self.uni_bag_of_words.keys().__len__()))
+            pro = np.divide(self.bi_bag_of_words.get(testword, 0)+1, (self.uni_bag_of_words.get(keywords[0], 0)+self.bi_bag_of_words.keys().__len__()))
             return -np.log2(pro)
         if self.active_model == "trigram":
             keywords = testword.rsplit(" ", 1)
-            pro = np.divide(self.tri_bag_of_words.get(testword, 0)+1, (self.bi_bag_of_words.get(keywords[0], 0)+self.bi_bag_of_words.keys().__len__()))
+            pro = np.divide(self.tri_bag_of_words.get(testword, 0)+1, (self.bi_bag_of_words.get(keywords[0], 0)+self.tri_bag_of_words.keys().__len__()))
             return -np.log2(pro)
         if self.active_model == "unigram":
 
@@ -208,7 +208,7 @@ class Model(object):
 
         print(' '.join(newessay))
         print("*******************************************************************************************************")
-        f = open(self.author+"_"+self.active_model+"generated.txt","a")
+        f = open("results/generate/"+self.author+"/"+self.active_model+"_generated.txt","a")
         f.write(datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S] ")+" ".join(newessay)+"\n")
         f.close()
 
