@@ -1,5 +1,6 @@
 # assignment1-eneskocak1
 In order to run the program, python3 and numpy library must be installed.
+    
     sudo apt-get install python3
     pip install numpy
     
