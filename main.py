@@ -9,10 +9,32 @@ def classification_test(test_indexes, test_author, modelname, generate=False, te
 
     Hamilton.add_essay(settings.hamilton_train_essays_indexes)
     Madison.add_essay(settings.madison_train_essays_indexes)
+
     if generate:
         for i in range(2):
-            Hamilton.generator()
-            Madison.generator()
+            essays={}
+            itemsH = Hamilton.generator()
+            itemsM = Madison.generator()
+            essays[itemsH[0]]=itemsH[1]
+            essays[itemsM[0]] = itemsM[1]
+            hamilton_prob = 0
+            madison_prob = 0
+            for j,k in essays.items():
+                model_words = k
+                name = j
+                for z in model_words:
+                    hamilton_prob += Hamilton.get_probabilities(z)
+                    madison_prob += Madison.get_probabilities(z)
+
+                if hamilton_prob < madison_prob:
+                    result = name+"'s generated test for " +modelname.upper() + " WIN:[HAMILTON] Hamilton Prob: " + "{0:.5f}".format(
+                        hamilton_prob) + " Madison Prob:" + " {0:.5f}".format(madison_prob)
+
+                else:
+                    result = name+"'s generated test for " + modelname.upper() + " WIN:[MADISON] Hamilton Prob: " + "{0:.5f}".format(
+                        hamilton_prob) + " Madison Prob:" + " {0:.5f}".format(madison_prob)
+
+                print(result)
     if test:
         f = open("results/classification/"+test_author + "/" + modelname + "_test_results.txt", "w+")
         for path in test_indexes:

@@ -211,6 +211,7 @@ class Model(object):
         f = open("results/generate/"+self.author+"/"+self.active_model+"_generated.txt","a")
         f.write(datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S] ")+" ".join(newessay)+"\n")
         f.close()
+        return self.author,newessay
 
     def cumulative_returner(self,dict):
 
@@ -227,3 +228,4 @@ class Model(object):
                     return i
                 else:
                     return i.rsplit(" ",1)[1]
+
